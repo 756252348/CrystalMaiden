@@ -16,7 +16,6 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['admin:giftInfo:add']"
               type="primary"
               icon="el-icon-plus"
               size="mini"
@@ -26,7 +25,6 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['admin:giftInfo:edit']"
               type="success"
               icon="el-icon-edit"
               size="mini"
@@ -101,11 +99,10 @@
                 class="delete-popconfirm"
                 title="确认要修改吗?"
                 confirm-button-text="修改"
-                @onConfirm="handleUpdate(scope.row)"
+                @confirm="handleUpdate(scope.row)"
               >
                 <el-button
                   slot="reference"
-                  v-permisaction="['admin:giftInfo:edit']"
                   size="mini"
                   type="text"
                   icon="el-icon-edit"
@@ -116,11 +113,10 @@
                 class="delete-popconfirm"
                 title="确认要删除吗?"
                 confirm-button-text="删除"
-                @onConfirm="handleDelete(scope.row)"
+                @confirm="handleDelete(scope.row)"
               >
                 <el-button
                   slot="reference"
-                  v-permisaction="['admin:giftInfo:remove']"
                   size="mini"
                   type="text"
                   icon="el-icon-delete"
