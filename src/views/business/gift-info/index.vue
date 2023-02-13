@@ -6,7 +6,24 @@
     <template #wrapper>
       <el-card class="box-card">
         <el-form ref="queryForm" :model="queryParams" :inline="true" label-width="68px">
-
+          <el-form-item label="名称" prop="title">
+            <el-input
+                v-model="queryParams.title"
+                placeholder="名称"
+              />
+          </el-form-item>
+          <el-form-item label="开始价格" prop="price">
+            <el-input
+                v-model="queryParams.startPrice"
+                placeholder="开始价格"
+              />
+          </el-form-item>
+          <el-form-item label="结束价格" prop="price">
+            <el-input
+                v-model="queryParams.endPrice"
+                placeholder="结束价格"
+              />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -65,7 +82,8 @@
           </el-table-column>
           <el-table-column label="图片" prop="images" align="center">
             <template slot-scope="scope">
-              <img :src="scope.row.images" class="el-upload el-upload--picture-card" style="float:left">
+              <!-- <img :src="scope.row.images" class="el-upload el-upload--picture-card" style="float:left"> -->
+              <el-image style="width: 100px; height: 100px" :src="scope.row.images" :preview-src-list="[scope.row.images]" />
             </template>
           </el-table-column>
           <el-table-column label="价格" prop="price" align="center">
@@ -85,12 +103,17 @@
           </el-table-column>
           <el-table-column label="是否彩盒" prop="ifBox" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.ifBox == 0 ? '是': '否' }}</span>
+              <span>{{ scope.row.ifBox == 1 ? '是': '否' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="是否含税" prop="ifTax" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.ifTax == 0 ? '是': '否' }}</span>
+              <span>{{ scope.row.ifTax == 1 ? '是': '否' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="发货地" prop="shippingPlace" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.shippingPlace }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -185,17 +208,37 @@
                 placeholder="装箱数"
               />
             </el-form-item>
-            <el-form-item label="是否彩盒" prop="ifBox">
+            <el-form-item label="发货地" prop="shippingPlace">
               <el-input
-                v-model="form.ifBox"
-                placeholder="是否彩盒"
+                v-model="form.shippingPlace"
+                placeholder="发货地"
               />
             </el-form-item>
+            <el-form-item label="是否彩盒" prop="ifBox">
+              <el-select
+                v-model="form.ifBox"
+                placeholder="是否彩盒"
+              >
+              <el-option
+      v-for="item in ifBoxOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+/>
+              </el-select>
+            </el-form-item>
             <el-form-item label="是否税" prop="ifTax">
-              <el-input
+              <el-select
                 v-model="form.ifTax"
                 placeholder="是否税"
-              />
+              >
+              <el-option
+      v-for="item in ifTaxOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+/>
+              </el-select>
             </el-form-item>
             <!-- <el-form-item label="添加时间" prop="createTime">
               <el-date-picker
@@ -251,13 +294,32 @@ export default {
       typeOptions: [],
       giftInfoList: [],
       headers: { 'Authorization': 'Bearer ' + getToken() },
-
+      ifBoxOptions: [{
+        value: '0',
+        label: '否'
+      },
+      {
+        value: '1',
+        label: '是'
+      }],
+      ifTaxOptions: [
+        {
+          value: '0',
+          label: '否'
+        },
+        {
+          value: '1',
+          label: '是'
+        }],
       // 关系表类型
 
       // 查询参数
       queryParams: {
         pageIndex: 1,
-        pageSize: 10
+        pageSize: 10,
+        title: undefined,
+        startPrice: undefined,
+        endPrice: undefined
 
       },
       // 表单参数
@@ -304,7 +366,8 @@ export default {
         netPrice: undefined,
         boxNum: undefined,
         ifBox: undefined,
-        ifTax: undefined
+        ifTax: undefined,
+        shippingPlace: undefined
       }
       this.resetForm('form')
     },

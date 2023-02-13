@@ -1,5 +1,5 @@
 <template>
-  <el-card :loading="loading" :body-style="{ padding: '20px 24px 8px' }" :bordered="false">
+  <el-card v-if="false" :loading="loading" :body-style="{ padding: '20px 24px 8px' }" :bordered="false">
     <div class="chart-card-header">
       <div class="meta">
         <span class="chart-card-title">
@@ -31,24 +31,7 @@
 </template>
 
 <script>
-export default {
-  name: 'ChartCard',
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    total: {
-      type: [Function, Number, String],
-      required: false,
-      default: null
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    }
-  }
-}
+
 </script>
 
 <style lang="scss" scoped>

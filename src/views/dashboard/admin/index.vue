@@ -59,7 +59,7 @@
       </el-col>
     </el-row>
 
-    <el-card :bordered="false" :body-style="{padding: '0'}">
+    <el-card v-if="false" :bordered="false" :body-style="{padding: '0'}">
       <div class="salesCard">
         <el-tabs>
           <el-tab-pane label="销售额">
