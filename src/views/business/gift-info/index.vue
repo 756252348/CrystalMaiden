@@ -24,6 +24,21 @@
                 placeholder="结束价格"
               />
           </el-form-item>
+          <el-form-item label="标签" prop="tagsId">
+              <el-select
+                v-model="selectId"
+                multiple
+                placeholder="标签"
+                @change="getQuerySelectValue"
+              >
+              <el-option
+      v-for="item in selectOptions"
+      :key="item.id"
+      :label="item.title"
+      :value="item.id"
+/>
+              </el-select>
+            </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -68,6 +83,11 @@
           <el-table-column label="名称" prop="title" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.title }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="标签" prop="type" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.tagsName.substring(0, scope.row.tagsName.lastIndexOf(',')) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="型号" prop="type" align="center">
@@ -168,6 +188,21 @@
                 placeholder="名称"
               />
             </el-form-item>
+            <el-form-item label="标签" prop="tagsId">
+              <el-select
+                v-model="form.tagId"
+                multiple
+                placeholder="标签"
+                @change="getSelectValue"
+              >
+              <el-option
+      v-for="item in selectOptions"
+      :key="item.id"
+      :label="item.title"
+      :value="item.id"
+/>
+              </el-select>
+            </el-form-item>
             <el-form-item label="型号" prop="type">
               <el-input
                 v-model="form.type"
@@ -267,6 +302,7 @@
 
 <script>
 import { addGiftInfo, delGiftInfo, getGiftInfo, listGiftInfo, updateGiftInfo } from '@/api/business/gift-info'
+import { GetListTags } from '@/api/business/sys-tags'
 import { getToken } from '@/utils/auth'
 
 export default {
@@ -293,6 +329,8 @@ export default {
       // 类型数据字典
       typeOptions: [],
       giftInfoList: [],
+      selectOptions: [],
+      selectId: undefined,
       headers: { 'Authorization': 'Bearer ' + getToken() },
       ifBoxOptions: [{
         value: '0',
@@ -319,7 +357,8 @@ export default {
         pageSize: 10,
         title: undefined,
         startPrice: undefined,
-        endPrice: undefined
+        endPrice: undefined,
+        tagsId: undefined
 
       },
       // 表单参数
@@ -336,6 +375,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getTagsList()
   },
   methods: {
     /** 查询参数列表 */
@@ -348,6 +388,37 @@ export default {
       }
       )
     },
+    /** 下拉多选 */
+    getSelectValue(val) {
+      var names = ''
+      var ids = ''
+      for (let i = 0; i <= val.length - 1; i++) {
+        this.selectOptions.find((item) => {
+          if (item.id === val[i]) {
+            names += item.title + ','
+            ids += item.id + ','
+          }
+        })
+      }
+      this.form.tagsName = names
+      this.form.tagsId = ids
+    },
+    getQuerySelectValue(val) {
+      var ids = ''
+      for (let i = 0; i <= val.length - 1; i++) {
+        this.selectOptions.find((item) => {
+          if (item.id === val[i]) {
+            ids += item.id + ','
+          }
+        })
+      }
+      this.queryParams.tagsId = ids
+    },
+    getTagsList() {
+      GetListTags(null).then(response => {
+        this.selectOptions = response.data
+      })
+    },
     // 取消按钮
     cancel() {
       this.open = false
@@ -356,7 +427,6 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-
         id: undefined,
         title: undefined,
         type: undefined,
@@ -367,7 +437,10 @@ export default {
         boxNum: undefined,
         ifBox: undefined,
         ifTax: undefined,
-        shippingPlace: undefined
+        shippingPlace: undefined,
+        tagsId: undefined,
+        tagsName: undefined,
+        tagId: undefined
       }
       this.resetForm('form')
     },
@@ -393,6 +466,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
+      this.getTagsList()
       this.open = true
       this.title = '添加商品'
       this.isEdit = false
@@ -409,11 +483,24 @@ export default {
       const id =
                 row.id || this.ids
       getGiftInfo(id).then(response => {
-        this.form = response.data
+        const json = response.data
         this.open = true
         this.title = '修改商品'
         this.isEdit = true
+        if (response.data.tagsId !== '') {
+          var arrIntRoles = response.data.tagsId.substring(0, response.data.tagsId.lastIndexOf(',')).split(',')
+          // eslint-disable-next-line no-array-constructor
+          var arrStringRoles = new Array()
+          for (var role in arrIntRoles) {
+            arrStringRoles.push(parseInt(arrIntRoles[role]))
+          }
+          // response.data.put('ids', arrStringRoles)
+          json['tagId'] = arrStringRoles
+          console.log(json)
+        }
+        this.form = json
       })
+      this.getTagsList()
     },
     /** 提交按钮 */
     submitForm: function() {
