@@ -461,6 +461,16 @@ export default {
     resetQuery() {
       this.dateRange = []
       this.resetForm('queryForm')
+      this.queryParams = {
+        pageIndex: 1,
+        pageSize: 10,
+        title: undefined,
+        startPrice: undefined,
+        endPrice: undefined,
+        tagsId: undefined
+
+      }
+      this.selectId = []
       this.handleQuery()
     },
     /** 新增按钮操作 */
