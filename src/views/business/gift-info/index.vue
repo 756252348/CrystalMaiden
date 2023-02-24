@@ -116,6 +116,11 @@
               <span>{{ scope.row.netPrice }}</span>
             </template>
           </el-table-column>
+          <el-table-column label="一件代发价格" prop="onePrice" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.onePrice }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="装箱数" prop="boxNum" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.boxNum }}</span>
@@ -235,6 +240,12 @@
               <el-input
                 v-model="form.netPrice"
                 placeholder="网上参考价格"
+              />
+            </el-form-item>
+            <el-form-item label="一件代发价格" prop="onePrice">
+              <el-input
+                v-model="form.onePrice"
+                placeholder="一件代发价格"
               />
             </el-form-item>
             <el-form-item label="装箱数" prop="boxNum">
@@ -440,7 +451,8 @@ export default {
         shippingPlace: undefined,
         tagsId: undefined,
         tagsName: undefined,
-        tagId: undefined
+        tagId: undefined,
+        onePrice: undefined
       }
       this.resetForm('form')
     },
